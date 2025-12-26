@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode Scheduler</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>LeetCode <span class="highlight">Spaced Repetition</span></h1>
+            <p>Master problems by reviewing them at optimal intervals.</p>
+        </header>
+
+        <div class="card input-section">
+            <input type="text" id="pLink" placeholder="Link (leetcode.com/...)">
+            <div class="preferences">
+                <label>Repetitions needed:</label>
+                <input type="number" id="pReps" value="3" min="1" max="10">
+            </div>
+            <button onclick="addProblem()">Add to Schedule</button>
+        </div>
+
+        <div class="lists-container">
+            <div class="list-column">
+                <h2>Due Today 🚨</h2>
+                <div id="dueList" class="problem-list"></div>
+            </div>
+            <div class="list-column">
+                <h2>Upcoming 📅</h2>
+                <div id="upcomingList" class="problem-list"></div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>
