@@ -3,36 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LeetCode Scheduler</title>
+    <title>Question Scheduler</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%234f46e5'/><path d='M9 17l5 5 9-11' stroke='white' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>LeetCode <span class="highlight">Spaced Repetition</span></h1>
-            <p>Master problems by reviewing them at optimal intervals.</p>
+    <div class="app">
+        <header class="top">
+            <div class="brand">
+                <h1>Question Scheduler</h1>
+                <p class="muted">Spaced repetition for coding problems</p>
+            </div>
+            <div class="stats" id="stats" aria-live="polite"></div>
         </header>
 
-        <div class="card input-section">
-            <input type="text" id="pLink" placeholder="Link (leetcode.com/...)">
-            <div class="preferences">
-                <label>Repetitions needed:</label>
-                <input type="number" id="pReps" value="3" min="1" max="10">
+        <section class="card add-card" aria-labelledby="addTitle">
+            <h2 id="addTitle">Add a problem</h2>
+            <form id="addForm" autocomplete="off">
+                <div class="add-grid">
+                    <div class="field span-2">
+                        <label for="link">Problem link</label>
+                        <input id="link" type="text" placeholder="https://leetcode.com/problems/two-sum/" required>
+                    </div>
+                    <div class="field">
+                        <label for="name">Name <span class="muted">(optional)</span></label>
+                        <input id="name" type="text" placeholder="Taken from the link">
+                    </div>
+
+                    <div class="field">
+                        <span class="label" id="difficultyLabel">Difficulty</span>
+                        <div class="segmented" role="radiogroup" aria-labelledby="difficultyLabel">
+                            <label><input type="radio" name="difficulty" value="" checked><span>None</span></label>
+                            <label><input type="radio" name="difficulty" value="easy"><span>Easy</span></label>
+                            <label><input type="radio" name="difficulty" value="medium"><span>Medium</span></label>
+                            <label><input type="radio" name="difficulty" value="hard"><span>Hard</span></label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="firstInterval">First review in</label>
+                        <div class="inline">
+                            <div class="suffixed">
+                                <input id="firstInterval" type="number" min="1" max="365" value="14" required>
+                                <span>days</span>
+                            </div>
+                            <div class="chips" id="intervalChips">
+                                <button type="button" data-days="1">1d</button>
+                                <button type="button" data-days="3">3d</button>
+                                <button type="button" data-days="7">1w</button>
+                                <button type="button" data-days="14">2w</button>
+                                <button type="button" data-days="30">1m</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="reps">Reviews to master</label>
+                        <div class="suffixed narrow">
+                            <input id="reps" type="number" min="1" max="20" value="3" required>
+                            <span>times</span>
+                        </div>
+                    </div>
+
+                    <details class="field span-3 notes-toggle">
+                        <summary>Add notes</summary>
+                        <textarea id="notes" rows="3" placeholder="Key insight, pattern, edge cases, complexity…"></textarea>
+                    </details>
+                </div>
+
+                <div class="add-footer">
+                    <p class="preview" id="preview"></p>
+                    <button type="submit" class="btn primary">Add to schedule</button>
+                </div>
+            </form>
+        </section>
+
+        <div class="toolbar">
+            <div class="search">
+                <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4"/></svg>
+                <input id="search" type="search" placeholder="Filter problems" aria-label="Filter problems">
             </div>
-            <button onclick="addProblem()">Add to Schedule</button>
         </div>
 
-        <div class="lists-container">
-            <div class="list-column">
-                <h2>Due Today 🚨</h2>
-                <div id="dueList" class="problem-list"></div>
-            </div>
-            <div class="list-column">
-                <h2>Upcoming 📅</h2>
-                <div id="upcomingList" class="problem-list"></div>
-            </div>
-        </div>
+        <main class="columns">
+            <section class="column" aria-labelledby="dueTitle">
+                <header class="column-head">
+                    <h2 id="dueTitle">Due now</h2>
+                    <span class="count" id="dueCount"></span>
+                </header>
+                <div id="backlog"></div>
+                <div id="dueList" class="list"></div>
+            </section>
+            <section class="column" aria-labelledby="upcomingTitle">
+                <header class="column-head">
+                    <h2 id="upcomingTitle">Upcoming</h2>
+                    <span class="count" id="upcomingCount"></span>
+                </header>
+                <div id="upcomingList" class="list"></div>
+            </section>
+        </main>
+
+        <details class="mastered" id="masteredSection">
+            <summary>
+                <h2>Mastered</h2>
+                <span class="count" id="masteredCount"></span>
+            </summary>
+            <div id="masteredList" class="list"></div>
+        </details>
+
+        <footer class="help muted">
+            <strong>Solved</strong> counts a review and doubles the gap.
+            <strong>Hard</strong> (needed hints or struggled) repeats the same gap.
+            <strong>Forgot</strong> brings it back tomorrow, then restarts from its first-review gap.
+        </footer>
     </div>
+
+    <div class="toasts" id="toasts" aria-live="polite"></div>
     <script src="/static/script.js"></script>
 </body>
 </html>
