@@ -5,7 +5,7 @@ const DAY_MS = 86_400_000;
 const PREFS_KEY = 'qs-add-prefs';
 
 // openDetails maps a problem id to its unsaved edits (or null), so re-renders keep drafts.
-const state = { problems: [], stats: null, filter: '', openDetails: new Map() };
+const state = { problems: [], filter: '', openDetails: new Map() };
 
 // --- Helpers ---
 
@@ -135,9 +135,7 @@ function showError(err) {
 
 async function load() {
     try {
-        const [problems, stats] = await Promise.all([api('GET', '/api/problems'), api('GET', '/api/stats')]);
-        state.problems = problems;
-        state.stats = stats;
+        state.problems = await api('GET', '/api/problems');
         render();
     } catch (err) {
         showError(err);
@@ -255,7 +253,6 @@ function renderStats(problems) {
     const dueNow = overdue + count(p => p.status === 'due');
     const week = count(p => p.status === 'upcoming' && p.days_until_due <= 7);
     const masteredCount = count(p => p.status === 'mastered');
-    const { streak = 0, reviewed_today: reviewedToday = 0 } = state.stats || {};
 
     const tile = (value, label, cls = '', title) =>
         el('div', { class: `stat ${cls}`, title }, el('div', { class: 'value' }, String(value)), el('div', { class: 'label' }, label));
@@ -265,8 +262,6 @@ function renderStats(problems) {
         tile(overdue, 'Overdue', overdue ? 'danger' : ''),
         tile(week, 'Next 7 days'),
         tile(masteredCount, 'Mastered'),
-        tile(`${streak}d`, reviewedToday ? `Streak · ${reviewedToday} today` : 'Streak', '',
-            'Consecutive days with at least one review'),
     );
 }
 

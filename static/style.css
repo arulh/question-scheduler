@@ -92,7 +92,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 
 .stats {
     display: grid;
-    grid-template-columns: repeat(5, minmax(92px, auto));
+    grid-template-columns: repeat(4, minmax(92px, auto));
     gap: 8px;
 }
 .stat {
@@ -485,7 +485,7 @@ textarea { resize: vertical; min-height: 64px; }
 /* --- Responsive --- */
 
 @media (max-width: 960px) {
-    .stats { grid-template-columns: repeat(5, minmax(0, 1fr)); width: 100%; }
+    .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; }
 }
 
 @media (max-width: 860px) {
@@ -496,7 +496,7 @@ textarea { resize: vertical; min-height: 64px; }
 
 @media (max-width: 560px) {
     .app { padding: 20px 16px 48px; }
-    .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .stat { padding: 8px 10px; }
     .actions .reviews { max-width: none; flex-basis: 100%; }
     .details { grid-template-columns: minmax(0, 1fr); }

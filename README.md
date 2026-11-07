@@ -39,4 +39,4 @@ Every review is logged, so the most recent one can be undone.
 | POST   | `/api/problems/{id}/undo`       | Reverts the latest review                                                       |
 | POST   | `/api/problems/{id}/snooze`     | `{"days"?: 1}`                                                                  |
 | POST   | `/api/problems/{id}/reactivate` | Brings a mastered problem back for one more review                              |
-| GET    | `/api/stats`                    | Review streak and counts                                                        |
+| GET    | `/api/stats`                    | Review counts                                                                   |

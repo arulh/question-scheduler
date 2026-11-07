@@ -1,7 +1,5 @@
 //! Pure scheduling rules, independent of the database and HTTP layers.
 
-use chrono::{NaiveDate, TimeDelta};
-
 /// Interval value stored while a forgotten problem is being relearned.
 /// The next review is tomorrow, after which the schedule restarts from the
 /// problem's base (first-review) interval.
@@ -92,26 +90,6 @@ pub fn next(s: Schedule, outcome: Outcome) -> Next {
             }
         }
     }
-}
-
-/// Consecutive days with at least one review, ending today or yesterday
-/// (a streak isn't broken until a full day passes without reviewing).
-/// `days` must be sorted newest first, without duplicates.
-pub fn streak(days: &[NaiveDate], today: NaiveDate) -> i64 {
-    let Some(&first) = days.first() else {
-        return 0;
-    };
-    if first != today && first != today - TimeDelta::days(1) {
-        return 0;
-    }
-    let mut count = 1;
-    for pair in days.windows(2) {
-        if pair[0] - pair[1] != TimeDelta::days(1) {
-            break;
-        }
-        count += 1;
-    }
-    count
 }
 
 /// Adds a scheme if missing and canonicalises LeetCode problem URLs to
@@ -250,19 +228,6 @@ mod tests {
                 in_days: 3
             }
         );
-    }
-
-    #[test]
-    fn streak_counts_consecutive_days() {
-        let d = |s| NaiveDate::parse_from_str(s, "%Y-%m-%d").unwrap();
-        let today = d("2026-10-24");
-        assert_eq!(streak(&[], today), 0);
-        assert_eq!(
-            streak(&[d("2026-10-24"), d("2026-10-23"), d("2026-10-21")], today),
-            2
-        );
-        assert_eq!(streak(&[d("2026-10-23"), d("2026-10-22")], today), 2);
-        assert_eq!(streak(&[d("2026-10-22")], today), 0);
     }
 
     #[test]

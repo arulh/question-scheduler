@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use chrono::{NaiveDate, NaiveDateTime};
+use chrono::NaiveDateTime;
 use rusqlite::{Connection, OptionalExtension, Row, params};
 
 // Same on-disk format SQLAlchemy used for SQLite DATETIME columns, so
@@ -301,21 +301,6 @@ pub fn reviews_by_problem(
         }
     }
     Ok(map)
-}
-
-/// Distinct days with at least one review, newest first.
-pub fn review_days(conn: &Connection) -> rusqlite::Result<Vec<NaiveDate>> {
-    let mut stmt = conn.prepare(
-        "SELECT DISTINCT substr(reviewed_at, 1, 10) AS day FROM review ORDER BY day DESC",
-    )?;
-    let days = stmt
-        .query_map([], |row| row.get::<_, String>(0))?
-        .filter_map(|r| match r {
-            Ok(s) => NaiveDate::parse_from_str(&s, "%Y-%m-%d").ok().map(Ok),
-            Err(e) => Some(Err(e)),
-        })
-        .collect();
-    days
 }
 
 pub fn review_count_since(conn: &Connection, since: NaiveDateTime) -> rusqlite::Result<i64> {
