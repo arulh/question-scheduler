@@ -363,7 +363,6 @@ async fn delete_problem(
 
 #[derive(Serialize)]
 struct Stats {
-    streak: i64,
     reviewed_today: i64,
     total_reviews: i64,
 }
@@ -371,9 +370,7 @@ struct Stats {
 async fn stats(State(db): State<Db>) -> ApiResult<Stats> {
     let conn = db.lock().unwrap();
     let today = today();
-    let days = db::review_days(&conn)?;
     Ok(Json(Stats {
-        streak: schedule::streak(&days, today),
         reviewed_today: db::review_count_since(&conn, today.and_time(NaiveTime::MIN))?,
         total_reviews: db::review_count_since(&conn, NaiveDateTime::MIN)?,
     }))
